@@ -100,21 +100,21 @@ var p = Ball.prototype = new createjs.Container();
 		this.y += this.vY;
 		
 		//verifier si bounce
-		if (this.y <= 0 ||  this.y >= 480) {
+		if (this.y <= 0 ||  this.y >= HEIGHT) {
 			if(this.y <= 0 ){
 				this.y = 0;
 			}else{
-				this.y = 480;
+				this.y = HEIGHT;
 			}
             this.horizontalBounce();
             
         }
         // si la balle touche le mur vertical
-        else if( this.x <= 0 ||  this.x >= 640) {
+        else if( this.x <= 0 ||  this.x >= WIDTH) {
         	if(this.x <= 0 ){
         		this.x = 0;
         	}else{
-        		this.x = 640;
+        		this.x = WIDTH;
         	}
             this.verticalBounce();
             

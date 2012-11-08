@@ -37,6 +37,8 @@
         <script src="js/GobelinsJS/Target.js"></script>
         <script>
             //-----Propriétés du jeu
+            var HEIGHT;
+            var WIDTH;
             var canvas;         //Main canvas
             var stage;          //Main display stage
 
@@ -58,6 +60,11 @@
             var preload;
             function init() {
             	
+            	
+            	WIDTH  = 500;
+          
+            	HEIGHT  = 300;
+            	
                 var manifest = [{id:"bounce", src:"assets/Bounce.mp3"}];
                 preload = new createjs.PreloadJS();
                 preload.onComplete = doneLoading;
@@ -65,6 +72,8 @@
                 preload.loadManifest(manifest);
 
                 canvas = document.getElementById("canvas");
+                canvas.width = WIDTH;
+				canvas.height = HEIGHT;
                 stage = new createjs.Stage(canvas);
                 score = 0;
                 lvl = 0;
@@ -120,15 +129,14 @@
 				stage.addChild(messageField);
 				
 				stage.update(); 	//update the stage to show text
-				stage.onclick = handleClick;
+				canvas.onclick = handleClick;
 			}
 			
 			function handleClick() {
 				console.log('handleClick')
 				//prevent extra clicks and hide text
 				canvas.onclick = null;
-				
-				// indicate the player is now on screen
+		
 				//lancer un son
 		
 				restart();
@@ -141,6 +149,7 @@
 				timeField.text = 'temps : ' + totalTime;
 				stage.addChild(scoreField);
 				stage.addChild(timeField);
+				
 				
 				ball = new Ball();
 				ball.x = canvas.width / 2;
