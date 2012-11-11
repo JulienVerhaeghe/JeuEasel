@@ -14,7 +14,7 @@ var p = Player.prototype = new createjs.Container();
 	p.hit;
 	p.lastPoints;// va permettre de connaire la direction a donner à la balle
 
-	
+	p.stage;
 
 // constructor:
 
@@ -22,7 +22,7 @@ var p = Player.prototype = new createjs.Container();
 
 	
 
-	p.initialize = function() {
+	p.initialize = function(stage) {
 
 		this.Container_initialize();
 
@@ -34,6 +34,7 @@ var p = Player.prototype = new createjs.Container();
 
 		this.lastPoints = new Array();
 
+		this.stage = stage;
 	}
 
 	
@@ -59,12 +60,14 @@ var p = Player.prototype = new createjs.Container();
 
 	}
 
-	p.tick = function() {
+	p.tick = function(stage,isTactil) {
 
-		
 		// suivre la sourie
-		this.x += (stage.mouseX - this.x ) * 0.1;
-		this.y += (stage.mouseY - this.y ) * 0.1;
+		if(!isTactil){
+			this.x += (stage.mouseX - this.x ) * 0.1;
+			this.y += (stage.mouseY - this.y ) * 0.1;		
+		}
+		
 
 		// recuperer la ou l'on est pour a partir de deux point calculer une trajectoire
 		this.lastPoints.push({ x: this.x, y: this.y });

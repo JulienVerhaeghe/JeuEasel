@@ -22,7 +22,7 @@
         <![endif]-->
 
        
-
+		<script src="http://connect.facebook.net/en_US/all.js"></script>
         <script src="js/vendor/jquery-1.8.2.min.js"></script>
         <script src="js/vendor/underscore-min.js"></script>
         <script src="js/vendor/backbone-min.0.5.3.js"></script>
@@ -31,206 +31,73 @@
         <script src="http://code.createjs.com/soundjs-0.3.0.min.js"></script>
         <script src="http://code.createjs.com/preloadjs-0.2.0.min.js"></script>
         
-        
+        <!-- TEMPLATE Game finish-->
+        <script id="gameFinishTemplate" type="text/template">
+			<p> votre score : <%= score %> </p>
+            <ul>
+				<li><a href='#'  id="replay">rejouer</a></li>
+				<li><a href='#score' id="showScore" >voir les score</a></li>
+				<li><a href='#recScore' id="replay" >enregistrer score</a></li>
+			</ul>
+        </script>
+        <!-- TEMPLATE Game -->
+        <script id="game" type="text/template">
+	        <canvas width='640' height='480' id='canvas'>
+	    		vous ne posseder pas de navigateur capable d'afficher ce contenu
+	        </canvas>
+         </script>
+         
+        <!-- TEMPLATE Score -->
+        <script id="scoreTemplate" type="text/template">
+            <!--<img src="<%= photo %>" alt="<%= name %>" />-->
+            <h1><%= name ,' ',lastname%>  |  <span><%= sexe %></span></h1>
+            
+            
+                <p>score:  <%= score %></p>
+            
+        </script>
+        <!-- TEMPLATE Formulaire -->
+        <script id="formulaireTemplate" type="text/template">
+            <ul>
+				<li><p>Votre score : <%= score %> </p>
+				<li><label>Nom :</label>
+				<input type="text" id="lastname" name="lastname" placeholder="Votre nom" required></li>
+				
+				<li><label>prénom :</label>
+				<input type="text" id="name" name="name" placeholder="Votre prénom" required></li>
+				<li><label>Votre sexe :</label>
+				<select id='sexe'>
+					<option selected="selected" value="M">Male</option>
+					<option value="F">Feminin</option>
+				</select></li>
+				<li><input type="submit" class='save' value="Envoyer Score"></li>
+			</ul>
+		<fb:login-button autologoutlink="true" onlogin="OnRequestPermission();">
+		</fb:login-button>            
+        </script>
+        <script src="js/GobelinsJS/GestionScoreBB.js"></script>
+        <script src="js/main.js"></script>
         <script src="js/GobelinsJS/Ball.js"></script>
         <script src="js/GobelinsJS/Player.js"></script>
         <script src="js/GobelinsJS/Target.js"></script>
-        <script>
-            //-----Propriétés du jeu
-            var HEIGHT;
-            var WIDTH;
-            var canvas;         //Main canvas
-            var stage;          //Main display stage
-
-            var ball;           //the actual ship
-            var player;         //the actual ship
-            
-            var totalTime; 		// tant que va disposer le joueur pour faire unscore maximum
-            
-
-            var messageField;       //Message display field
-            var scoreField;         //score Field
-            var timeField;
-            
-            var target;			//cible que le joueur doit toucher
-			var score ;
-			var lvl;  			// a chaque fois que le joueur chope un point, le niveau augmente
-            var loadingInterval = 0;
-
-            var preload;
-            function init() {
-            	
-            	
-            	WIDTH  = 500;
-          
-            	HEIGHT  = 300;
-            	
-                var manifest = [{id:"bounce", src:"assets/Bounce.mp3"}];
-                preload = new createjs.PreloadJS();
-                preload.onComplete = doneLoading;
-                preload.installPlugin(createjs.SoundJS);
-                preload.loadManifest(manifest);
-
-                canvas = document.getElementById("canvas");
-                canvas.width = WIDTH;
-				canvas.height = HEIGHT;
-                stage = new createjs.Stage(canvas);
-                score = 0;
-                lvl = 0;
-              
-                messageField = new createjs.Text("Loading", "bold 24px Arial", "#00FFFF");
-                messageField.maxWidth = 1000;
-                messageField.textAlign = "center";
-                messageField.x = canvas.width / 2;
-                messageField.y = canvas.height / 2;
-                
-                
-                stage.addChild(messageField);
-                stage.update();     //update the stage to show text
-
-
-				
-                loadingInterval = setInterval(updateLoading, 200);
-            }
-            function updateLoading() {
-                messageField.text = "Loading " + (preload.progress*100|0) + "%"
-                stage.update();
-                console.log("tick");
-				
-            }
-            function doneLoading() {
-                clearInterval(loadingInterval);
-                scoreField = new createjs.Text("0", "bold 12px Arial", "#000");
-                scoreField.textAlign = "right";
-                scoreField.x = canvas.width - 10;
-                scoreField.y = 22;
-                scoreField.maxWidth = 1000;
-                
-                timeField = new createjs.Text("", "bold 12px Arial", "#000");
-                timeField.textAlign = "right";
-                timeField.x = canvas.width - 10;
-                timeField.y = 44;
-                timeField.maxWidth = 1000;
-                
-                
-				/*console.log(createjs.Touch.enable( stage,true,true ));
-				createjs.Touch.enable( stage,true,true );*/
-				
-
-                messageField.text = "Bienvenue - cliquer ici";
-				
-                // start the music
-                //createjs.SoundJS.play("music", createjs.SoundJS.INTERRUPT_NONE, 0, 0, -1, 0.4);
-
-                watchRestart();
-            }
-            function watchRestart() {
-				//watch for clicks
-				stage.addChild(messageField);
-				
-				stage.update(); 	//update the stage to show text
-				canvas.onclick = handleClick;
-			}
-			
-			function handleClick() {
-				console.log('handleClick')
-				//prevent extra clicks and hide text
-				canvas.onclick = null;
-		
-				//lancer un son
-		
-				restart();
-			}
-			//reset all game logic
-			function restart() {
-				//hide anything on stage and show the score
-				stage.removeAllChildren();
-				scoreField.text = (0).toString();
-				timeField.text = 'temps : ' + totalTime;
-				stage.addChild(scoreField);
-				stage.addChild(timeField);
-				
-				
-				ball = new Ball();
-				ball.x = canvas.width / 2;
-				ball.y = canvas.height / 2;
-				
-				player = new Player();
-				player.x = canvas.width / 2;
-				player.y = canvas.height / 2;
-				
-				target = new Target();
-				target.randomize();
-				
-				stage.clear();
-				stage.addChild(ball);
-				stage.addChild(player);
-				stage.addChild(target);
-				
-				//start game timer
-				createjs.Ticker.setFPS(60);
-				totalTime = 60 * 60;// * par le fps pour pouvoir mettre un temps en seconde
-				createjs.Ticker.addListener(window);
-
-			}
-			function tick() {
-				
-				ball.tick(player);
-				player.tick();
-				if(ball.hitRadius(player.x,player.y,player.hit) == true){
-						playerToBall();	
-				}else if(ball.hitRadius(target.x,target.y,target.hit) == true){
-					
-					onTargetHit();
-				}
-				totalTime --;
-				timeField.text = 'temps : ' + totalTime;
-				stage.update();
-				if(totalTime<=0){
-					gameOver();
-				}
-				
-			}
-			function gameOver(){
-				// supprimer tout les enfants du stage 
-				stage.removeAllChildren();
-				messageField.text = 'Game Over | votre score : '+ score;
-				stage.addChild(messageField);
-				
-			}
-			function onTargetHit(){
-				
-				target.x = Math.random()* canvas.width;
-				target.y = Math.random()* canvas.height;
-				
-				//augmenter le score
-				lvl++;
-				score += 10 * lvl;
-				scoreField.text = 'score : ' + score;
-			}
-			function playerToBall(){
-				
-				p1 = player.lastPoints[player.lastPoints.length - 1];
-                //console.log(p1);
-                p2 = player.lastPoints[player.lastPoints.length - 10];
-               
-                angle = Math.atan2(p1.y - p2.y, p1.x - p2.x);
-				
-                ball.vX = Math.cos(angle) *5;
-                ball.vY = Math.sin(angle) * 5;
-                
-			}
+        <script language="javascript" type="text/javascript">
+				    FB.init({
+				        appId: '300354753403315',
+				        status: true, 
+				        cookie: true, 
+				        xfbml: true 
+				    });    
+		</script>
         
-			$(function() {
-			 	init();
-			});
-        </script>
 
         <!-- Composants jeu -->
-
-        <canvas width='640' height='480' id='canvas'>
-        	vous ne posseder pas de navigateur capable d'afficher ce contenu
-        </canvas>
+		<div id='content'>
+			
+		</div>
+        
+        
+     
+        
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
         <!--<script>
             var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
