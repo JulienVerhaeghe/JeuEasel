@@ -10,7 +10,6 @@ var p = Ball.prototype = new createjs.Container();
 
 // public properties:
 
-
 	p.BallBody;
 	
 	p.vX;
@@ -20,7 +19,10 @@ var p = Ball.prototype = new createjs.Container();
 	p.bounds;
 
 	p.hit;
+	
+	p.largeurDeplacement;
 
+	p.hauteurDeplacement;
 
 // constructor:
 
@@ -69,10 +71,11 @@ var p = Ball.prototype = new createjs.Container();
 
 	}
 
-	
+	// faire un rebond vertical
 	p.verticalBounce = function(){
         this.vX = this.vX * (-1)
     }
+	// idem horizontal    
     p.horizontalBounce = function(){
         this.vY = this.vY * (-1)
     }
@@ -91,36 +94,44 @@ var p = Ball.prototype = new createjs.Container();
 		//verifier les bords arrondiees
 		return this.hit + tHit > Math.sqrt(Math.pow(Math.abs(this.x - tX),2) + Math.pow(Math.abs(this.y - tY),2));
 
-	}
+	},
+	//limitter le déplacement de a balle sur une hauteur et une taille donné
+	
+	p.constrainBall = function(largeur,hauteur){
+		
+		this.largeurDeplacement = largeur;
+		
+		this.hauteurDeplacement = hauteur;
+		
+	},
 	p.tick = function(player) {
-
+		
 		// deplacer
 		this.x += this.vX;
 
 		this.y += this.vY;
 		
 		//verifier si bounce
-		if (this.y <= 0 ||  this.y >= HEIGHT) {
+		if (this.y <= 0 ||  this.y >= this.hauteurDeplacement) {
 			if(this.y <= 0 ){
 				this.y = 0;
 			}else{
-				this.y = HEIGHT;
+				this.y = this.hauteurDeplacement;
 			}
             this.horizontalBounce();
             
         }
         // si la balle touche le mur vertical
-        else if( this.x <= 0 ||  this.x >= WIDTH) {
+        else if( this.x <= 0 ||  this.x >= this.largeurDeplacement) {
         	if(this.x <= 0 ){
         		this.x = 0;
         	}else{
-        		this.x = WIDTH;
+        		this.x = this.largeurDeplacement;
         	}
             this.verticalBounce();
             
         }
-        // verifier si l'on touche le player
-        
+      
 
 		
 

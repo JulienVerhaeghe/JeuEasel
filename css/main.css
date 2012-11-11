@@ -21,7 +21,11 @@ textarea {
 body {
     font-size: 1em;
     line-height: 1.4;
+    background-color: #999999;
+    
+   
 }
+
 
 /*
  * Remove text-shadow in selection highlight: h5bp.com/i
@@ -297,3 +301,11 @@ textarea {
     }
     
 }
+canvas, #content{
+	background-color: #fff;
+}
+#content{
+	width: 640px;
+	margin: 0 auto;
+}
+

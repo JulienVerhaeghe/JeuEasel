@@ -15,12 +15,7 @@ var p = Target.prototype = new createjs.Container();
 
 	
 
-	
-	p.vX;
 
-	p.vY;
-
-	
 
 	p.bounds;
 
@@ -30,7 +25,7 @@ var p = Target.prototype = new createjs.Container();
 
 // constructor:
 
-	p.Container_initialize = p.initialize;	//unique to avoid overiding base class
+	p.Container_initialize = p.initialize;	
 
 	
 
